@@ -1,0 +1,3 @@
+com\mthoko\censorapp\CensorappApplication.class
+com\mthoko\censorapp\util\DBConnectionUtil.class
+com\mthoko\censorapp\TestDBConnection.class
