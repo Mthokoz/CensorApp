@@ -15,12 +15,13 @@ public class Word {
     @Column(name="ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ID;
+    
     @Column(name="WORD")
     private String Word;
 
     @Override
     public String toString() {
-        return "Word [Word=" + Word + "]";
+        return "[Word= " + Word + "]";
     }
 
     public int getID() {
