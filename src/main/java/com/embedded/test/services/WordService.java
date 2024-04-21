@@ -1,6 +1,7 @@
 package com.embedded.test.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,8 @@ public class WordService {
 
     public ArrayList<Word> censorWords(){
         for(Word w: messageWords){
-            System.out.println("Query: "+ this.wordRepository.findByWord(w.getWord()));
-            if(!this.wordRepository.findByWord(w.getWord()).isEmpty()){
+           
+            if(!this.wordRepository.findByWord(w.getWord().toUpperCase()).isEmpty()){
                 w.setWord(blopper(w.getWord()));
             }
            ;
@@ -35,6 +36,50 @@ public class WordService {
             asterik.append("*");
        }
         return asterik.toString();
+    }
+
+    public String createWord(String word){
+        if(this.wordRepository.findByWord(word.trim().toUpperCase()).isEmpty()){
+            Word w = new Word();
+            w.setWord(word.toUpperCase());
+             
+            return this.wordRepository.save(w).getWord()+" is created";
+        }
+        else{
+            return word+" already exist";
+        }
+    }
+
+    public String deleteWord(String word){
+        if(!this.wordRepository.findByWord(word.trim().toUpperCase()).isEmpty()){
+            Word w = new Word();
+            w.setWord(word.toUpperCase());
+            this.wordRepository.delete(w);
+            return w.getWord()+" has been deleted";
+        }else{
+            return word+" does not exist";
+        }
+    }
+
+    public String updateWord(String oldWord, String newWord){
+        Word wordToUpdate = this.wordRepository.findByWord(oldWord.trim().toUpperCase()).get(0);
+        if(wordToUpdate != null){
+            wordToUpdate.setWord(newWord.toUpperCase());
+            return this.wordRepository.save(wordToUpdate).toString()+ " has be updated";
+        }else{
+            return oldWord+" does not exist";
+        }
+    }
+
+    public Word getWord(String word){
+        if(!this.wordRepository.findByWord(word.trim().toUpperCase()).isEmpty()){
+            return this.wordRepository.findByWord(word.trim().toUpperCase()).get(0);
+        }
+        return null;
+    } 
+
+    public List<Word> getAllWords(){
+        return this.wordRepository.findAll();
     }
 
 }

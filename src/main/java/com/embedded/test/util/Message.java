@@ -42,7 +42,7 @@ public class Message {
        
         for (String w: words){
             Word word = new Word();
-            word.setWord(w.trim().toUpperCase());
+            word.setWord(w.trim());
             messagePrepared.add(word);
         }
 

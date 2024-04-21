@@ -21,7 +21,7 @@ public class Word {
 
     @Override
     public String toString() {
-        return "[Word= " + Word + "]";
+        return Word+" " ;
     }
 
     public int getID() {
