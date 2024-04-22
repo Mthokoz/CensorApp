@@ -11,5 +11,5 @@ import java.util.List;
 public interface WordRepository extends JpaRepository <Word , Integer> {
     @Query("SELECT w FROM Word w WHERE w.Word = :word")
     List<Word> findByWord(@Param("word") String wordString);
-    
+
 }

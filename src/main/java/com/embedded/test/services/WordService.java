@@ -42,6 +42,7 @@ public class WordService {
         if(this.wordRepository.findByWord(word.trim().toUpperCase()).isEmpty()){
             Word w = new Word();
             w.setWord(word.toUpperCase());
+            w.setID((int)(this.wordRepository.count()+1));
              
             return this.wordRepository.save(w).getWord()+" is created";
         }
@@ -52,10 +53,9 @@ public class WordService {
 
     public String deleteWord(String word){
         if(!this.wordRepository.findByWord(word.trim().toUpperCase()).isEmpty()){
-            Word w = new Word();
-            w.setWord(word.toUpperCase());
-            this.wordRepository.delete(w);
-            return w.getWord()+" has been deleted";
+            
+            this.wordRepository.delete(this.wordRepository.findByWord(word.trim().toUpperCase()).get(0));
+            return word+" has been deleted";
         }else{
             return word+" does not exist";
         }

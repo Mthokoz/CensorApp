@@ -2,33 +2,27 @@ package com.embedded.test.controller;
 
 import java.util.ArrayList;
 
-import org.hibernate.service.spi.InjectService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.embedded.test.services.WordService;
 import com.embedded.test.model.Word;
 import com.embedded.test.repository.WordRepository;
-import com.embedded.test.repository.WordRepository;
 import com.embedded.test.util.Message;
-import com.fasterxml.jackson.annotation.JacksonInject;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import org.springframework.web.bind.annotation.PathVariable;
 
 
 
 @RestController
-
+@Api(value = "Sensitive words censoring service", description = "CRUD operations and word censoring functionality")
 public class WordController {
 
     
@@ -45,6 +39,7 @@ public class WordController {
     }
     
     @RequestMapping(path = "/censor" ,method=RequestMethod.POST)
+    @ApiOperation(value = "Send a string to be processed and censored", response = String.class)
     public String postWords(@RequestParam String message) {
         this.payloadMessage = new Message();
         this.payloadMessage.setInputSring(message);
@@ -52,44 +47,49 @@ public class WordController {
 
         this.wordService = new WordService(s, wordRepository);
 
-        
         return "Sent: "+s.toString() ;    
     }
 
     @RequestMapping(path = "/result" ,method=RequestMethod.GET)
+    @ApiOperation(value = "Fetch results of censored string", response = String.class)
     public String getWords() {
         String r = new String(this.wordService.censorWords().toString());
         
         return  "Response: "+r;
     }
 
-    @RequestMapping(path ="/create/{newWord}", method=RequestMethod.POST)
-    public String requestCreateWord(@RequestParam String word) {
+    @RequestMapping(path ="/create/{word}", method=RequestMethod.POST)
+    @ApiOperation(value = "Create and add new word into the table", response = String.class)
+    public String requestCreateWord(@PathVariable String word) {
         return this.wordService.createWord(word);
     }
 
-    @RequestMapping(path="/{oldWord}/{newWord}", method=RequestMethod.PUT)
+    @RequestMapping(path="update/{oldWord}/{newWord}", method=RequestMethod.PUT)
+    @ApiOperation(value = "Update an already existing word with a new word", response=String.class)
     public String requestUpdateWord(@PathVariable String oldWord, @PathVariable String newWord) {
         String r = this.wordService.updateWord(oldWord, newWord);
         return r;
     }
 
     @RequestMapping(path="/delete/{word}", method=RequestMethod.DELETE)
-    public String requestDeleteWord(@RequestParam String param) {
-        return wordService.deleteWord(param);
+    @ApiOperation(value = "Delete a word by its value", response = String.class)
+    public String requestDeleteWord(@PathVariable String word) {
+        return wordService.deleteWord(word);
     }
 
     @RequestMapping(path="word/{word}", method=RequestMethod.GET)
-    public String requestGetWord(@RequestParam String word) {
+    @ApiOperation(value = "Get a word by its value", response = String.class)
+    public String requestGetWord(@PathVariable String word) {
         if(this.wordService.getWord(word) != null)
             return this.wordService.getWord(word).getWord();
         return word+" Not found";
     }
     
     
-    @RequestMapping(path ="all", method=RequestMethod.GET)
+    @RequestMapping(path ="words", method=RequestMethod.GET)
+    @ApiOperation(value="List all the words in the database", response = Iterable.class)
     public String requestMethodName() {
-        Iterable<Word> words = this.wordService.getAllWords()
+        Iterable<Word> words = this.wordService.getAllWords();
         return words.toString();
     }
     
